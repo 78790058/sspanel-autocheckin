@@ -4,6 +4,10 @@ PATH="/usr/local/bin:/usr/bin:/bin"
 
 ENV_PATH="$(dirname $0)/.env"
 
+IS_MACOS=$(uname | grep 'Darwin' | wc -l)
+
+TITLE="SSPanel Auto Checkin 签到结果"
+
 if [ -f ${ENV_PATH} ]; then
     source ${ENV_PATH}
 fi
@@ -18,50 +22,98 @@ fi
 
 COOKIE_PATH="./.ss-autocheckin.cook"
 
+PUSH_TMP_PATH="./.ss-autocheckin.tmp"
+
 login=$(curl "${DOMAIN}/auth/login" -d "email=${USERNAME}&passwd=${PASSWD}&code=" -c ${COOKIE_PATH} -L -k -s)
 
-date=$(date '+%Y-%m-%d %H:%M:%S')
-login_status=$(echo ${login} | jq '.msg')
+start_time=$(date '+%Y-%m-%d %H:%M:%S')
+login_code=$(echo ${login} | jq -r '.ret')
+login_status=$(echo ${login} | jq -r '.msg')
 
-if [ "${login_status}" == "" ]; then
-    login_status='"登录失败"'
+login_log_text="【签到站点】: ${DOMAIN}\n\n"
+login_log_text="${login_log_text}【签到用户】: ${USERNAME}\n\n"
+login_log_text="${login_log_text}【签到时间】: ${start_time}\n\n"
+
+if [ ${login_code} -eq 0 ]; then
+    login_log_text="${login_log_text}【签到状态】: 登录失败, 请检查配置\n\n"
+    echo ${login_log_text}
+
+    if [ "${PUSH_KEY}" ]; then
+        echo "text=${TITLE}&desp=${login_log_text}" > ${PUSH_TMP_PATH}
+        push=$(curl -k -s --data-binary @${PUSH_TMP_PATH} "https://sc.ftqq.com/${PUSH_KEY}.send")
+        push_code=$(echo ${push} | jq -r ".errno")
+        if [ ${push_code} -eq 0 ]; then
+            echo "【推送结果】: 成功\n"
+        else
+            echo "【推送结果】: 失败\n"
+        fi
+    fi
+    exit 1;
 fi
 
-login_text="[${date}] ${login_status}"
+userinfo=$(curl -k -s -G -b ${COOKIE_PATH} "${DOMAIN}/getuserinfo")
+user=$(echo ${userinfo} | tr '\r\n' ' ' | jq -r ".info.user")
 
-echo ${login_text}
+# 等级过期时间
+class_expire=$(echo ${user} | jq -r ".class_expire")
+# 账户过期时间
+expire_in=$(echo ${user} | jq -r ".expire_in")
+# 上次签到时间
+last_check_in_time=$(echo ${user} | jq -r ".last_check_in_time")
+# 用户余额
+money=$(echo ${user} | jq -r ".money")
+# 用户限速
+node_speedlimit=$(echo ${user} | jq -r ".node_speedlimit")
+# 总流量
+transfer_enable=$(echo ${user} | jq -r ".transfer_enable")
+# 总共使用流量
+last_day_t=$(echo ${user} | jq -r ".last_day_t")
+# 剩余流量
+transfer_used=$(expr ${transfer_enable} - ${last_day_t})
+# 转换 GB
+transfer_enable_text=$(echo ${transfer_enable} | awk '{ byte =$1 /1024/1024**2 ; print byte " GB" }')
+last_day_t_text=$(echo ${last_day_t} | awk '{ byte =$1 /1024/1024**2 ; print byte " GB" }')
+transfer_used_text=$(echo ${transfer_used} | awk '{ byte =$1 /1024/1024**2 ; print byte " GB" }')
+# 转换上次签到时间
+if [ ${IS_MACOS} -eq 0 ]; then 
+    last_check_in_time_text=$(date -d "1970-01-01 UTC ${last_check_in_time} seconds" "+%F %T")
+else
+    last_check_in_time_text=$(date -r ${last_check_in_time} '+%Y-%m-%d %H:%M:%S')
+fi
+
+user_log_text="【用户余额】: ${money} CNY\n\n"
+user_log_text="${user_log_text}【用户限速】: ${node_speedlimit} Mbps\n\n"
+user_log_text="${user_log_text}【总流量】: ${transfer_enable_text}\n\n"
+user_log_text="${user_log_text}【剩余流量】: ${transfer_used_text}\n\n"
+user_log_text="${user_log_text}【已使用流量】: ${last_day_t_text}\n\n"
+user_log_text="${user_log_text}【等级过期时间】: ${class_expire}\n\n"
+user_log_text="${user_log_text}【账户过期时间】: ${expire_in}\n\n"
+user_log_text="${user_log_text}【上次签到时间】: ${last_check_in_time_text}\n\n"
 
 checkin=$(curl -k -s -d "" -b ${COOKIE_PATH} "${DOMAIN}/user/checkin")
+chechin_code=$(echo ${checkin} | jq -r ".ret")
+checkin_status=$(echo ${checkin} | jq -r ".msg")
 
-rm -rf ${COOKIE_PATH}
-
-date=$(date '+%Y-%m-%d %H:%M:%S')
-checkin_status=$(echo ${checkin} | jq '.msg')
-
-if [ "${checkin_status}" == "" ]; then
-    checkin_status='"签到失败"'
+if [ "${checkin_status}" ]; then
+    checkin_log_text="【签到状态】: ${checkin_status}\n\n"
+else
+    checkin_log_text="${log_text}【签到状态】: 签到失败, 请检查是否存在签到验证码\n\n"
 fi
 
-checkin_text="[${date}] ${checkin_status}"
+result_log_text="${login_log_text}${checkin_log_text}${user_log_text}"
 
-echo ${checkin_text}
+echo ${result_log_text}
 
-date=$(date '+%Y-%m-%d %H:%M:%S')
-if [ "${PUSH_KEY}" == "" ]; then
-    push_status='"未配置推送 PUSH_KEY"'
-else
-    text="SSPanel Auto Checkin 签到结果"
-    desp="站点: ${DOMAIN}"+$'\n\n'+"用户名: ${USERNAME}"+$'\n\n'+"${login_text}"+$'\n\n'+"${checkin_text}"+$'\n\n'
-    push=$(curl -k -s -d "text=${text}&desp=${desp}" "https://sc.ftqq.com/${PUSH_KEY}.send")
-    push_code=$(echo ${push} | jq '.errno')
-
-    if [ ${push_code} == 0 ]; then
-        push_status='"签到结果推送成功"'
+if [ "${PUSH_KEY}" ]; then
+    echo "text=${TITLE}&desp=${result_log_text}" > ${PUSH_TMP_PATH}
+    push=$(curl -k -s --data-binary @${PUSH_TMP_PATH} "https://sc.ftqq.com/${PUSH_KEY}.send")
+    push_code=$(echo ${push} | jq -r ".errno")
+    if [ ${push_code} -eq 0 ]; then
+        echo "【推送结果】: 成功\n"
     else
-        push_status='"签到结果推送失败"'
+        echo "【推送结果】: 失败\n"
     fi
 fi
 
-push_text="[${date}] ${push_status}"
-
-echo ${push_text}
+rm -rf ${COOKIE_PATH}
+rm -rf ${PUSH_TMP_PATH}
