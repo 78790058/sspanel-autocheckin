@@ -36,16 +36,16 @@ login_log_text="${login_log_text}【签到时间】: ${start_time}\n\n"
 
 if [ ${login_code} -eq 0 ]; then
     login_log_text="${login_log_text}【签到状态】: 登录失败, 请检查配置\n\n"
-    echo ${login_log_text}
+    echo -e ${login_log_text}
 
     if [ "${PUSH_KEY}" ]; then
-        echo "text=${TITLE}&desp=${login_log_text}" > ${PUSH_TMP_PATH}
+        echo -e "text=${TITLE}&desp=${login_log_text}" > ${PUSH_TMP_PATH}
         push=$(curl -k -s --data-binary @${PUSH_TMP_PATH} "https://sc.ftqq.com/${PUSH_KEY}.send")
         push_code=$(echo ${push} | jq -r ".errno")
         if [ ${push_code} -eq 0 ]; then
-            echo "【推送结果】: 成功\n"
+            echo -e "【推送结果】: 成功\n"
         else
-            echo "【推送结果】: 失败\n"
+            echo -e "【推送结果】: 失败\n"
         fi
     fi
     exit 1;
@@ -102,16 +102,16 @@ fi
 
 result_log_text="${login_log_text}${checkin_log_text}${user_log_text}"
 
-echo ${result_log_text}
+echo -e ${result_log_text}
 
 if [ "${PUSH_KEY}" ]; then
-    echo "text=${TITLE}&desp=${result_log_text}" > ${PUSH_TMP_PATH}
+    echo -e "text=${TITLE}&desp=${result_log_text}" > ${PUSH_TMP_PATH}
     push=$(curl -k -s --data-binary @${PUSH_TMP_PATH} "https://sc.ftqq.com/${PUSH_KEY}.send")
     push_code=$(echo ${push} | jq -r ".errno")
     if [ ${push_code} -eq 0 ]; then
-        echo "【推送结果】: 成功\n"
+        echo -e "【推送结果】: 成功\n"
     else
-        echo "【推送结果】: 失败\n"
+        echo -e "【推送结果】: 失败\n"
     fi
 fi
 
