@@ -44,7 +44,7 @@ if [ "${users_array}" ]; then
         login_log_text="${login_log_text}【签到用户】: ${username}\n\n"
         login_log_text="${login_log_text}【签到时间】: ${start_time}\n\n"
 
-        if [ ${login_code} -eq 1 ]; then
+        if [ ${login_code} == 1 ]; then
             userinfo=$(curl -k -s -G -b ${COOKIE_PATH} "${domain}/getuserinfo")
             user=$(echo ${userinfo} | tr '\r\n' ' ' | jq -r ".info.user")
 
