@@ -97,7 +97,7 @@ checkin_status=$(echo ${checkin} | jq -r ".msg")
 if [ "${checkin_status}" ]; then
     checkin_log_text="【签到状态】: ${checkin_status}\n\n"
 else
-    checkin_log_text="${log_text}【签到状态】: 签到失败, 请检查是否存在签到验证码\n\n"
+    checkin_log_text="【签到状态】: 签到失败, 请检查是否存在签到验证码\n\n"
 fi
 
 result_log_text="${login_log_text}${checkin_log_text}${user_log_text}"
