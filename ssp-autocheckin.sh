@@ -36,10 +36,6 @@ if [ "${users_array}" ]; then
 
         login=$(curl "${domain}/auth/login" -d "email=${username}&passwd=${passwd}&code=" -c ${COOKIE_PATH} -L -k -s)
 
-        echo '---'
-        echo $login
-        echo '---'
-
         start_time=$(date '+%Y-%m-%d %H:%M:%S')
         login_code=$(echo ${login} | jq -r '.ret')
         login_status=$(echo ${login} | jq -r '.msg')
