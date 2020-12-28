@@ -44,24 +44,7 @@ if [ "${users_array}" ]; then
         login_log_text="${login_log_text}【签到用户】: ${username}\n\n"
         login_log_text="${login_log_text}【签到时间】: ${start_time}\n\n"
 
-        if [ ${login_code} -eq 0 ]; then
-            login_log_text="${login_log_text}【签到状态】: 登录失败, 请检查配置\n\n"
-            echo -e ${login_log_text}
-
-            if [ "${PUSH_KEY}" ]; then
-                echo -e "text=${TITLE}&desp=${login_log_text}" > ${PUSH_TMP_PATH}
-                push=$(curl -k -s --data-binary @${PUSH_TMP_PATH} "https://sc.ftqq.com/${PUSH_KEY}.send")
-                push_code=$(echo ${push} | jq -r ".errno")
-                if [ ${push_code} -eq 0 ]; then
-                    echo -e "【推送结果】: 成功\n"
-                else
-                    echo -e "【推送结果】: 失败\n"
-                fi
-
-                rm -rf ${COOKIE_PATH}
-                rm -rf ${PUSH_TMP_PATH}
-            fi
-        else
+        if [ ${login_code} == 1 ]; then
             userinfo=$(curl -k -s -G -b ${COOKIE_PATH} "${domain}/getuserinfo")
             user=$(echo ${userinfo} | tr '\r\n' ' ' | jq -r ".info.user")
 
@@ -128,6 +111,23 @@ if [ "${users_array}" ]; then
 
             rm -rf ${COOKIE_PATH}
             rm -rf ${PUSH_TMP_PATH}
+        else
+            login_log_text="${login_log_text}【签到状态】: 登录失败, 请检查配置\n\n"
+            echo -e ${login_log_text}
+
+            if [ "${PUSH_KEY}" ]; then
+                echo -e "text=${TITLE}&desp=${login_log_text}" > ${PUSH_TMP_PATH}
+                push=$(curl -k -s --data-binary @${PUSH_TMP_PATH} "https://sc.ftqq.com/${PUSH_KEY}.send")
+                push_code=$(echo ${push} | jq -r ".errno")
+                if [ ${push_code} -eq 0 ]; then
+                    echo -e "【推送结果】: 成功\n"
+                else
+                    echo -e "【推送结果】: 失败\n"
+                fi
+
+                rm -rf ${COOKIE_PATH}
+                rm -rf ${PUSH_TMP_PATH}
+            fi
         fi
         echo -e "---------------------------------------\n"
     done
