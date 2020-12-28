@@ -12,9 +12,7 @@ on:
 
 env:
     TZ: Asia/Shanghai
-    DOMAIN: ${{secrets.DOMAIN}}
-    USERNAME: ${{secrets.USERNAME}}
-    PASSWD: ${{secrets.PASSWD}}
+    USERS: ${{secrets.USERS}}
     PUSH_KEY: ${{secrets.PUSH_KEY}}
 
 jobs:
