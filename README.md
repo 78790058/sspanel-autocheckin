@@ -1,16 +1,25 @@
-# SSPanel 自动签到
+# SSPanel 自动签到 V2.0 支持多站点多用户
 
 ![SSPanel_Auto_Checkin](https://github.com/isecret/sspanel-autocheckin/workflows/SSPanel_Auto_Checkin/badge.svg)
 
 > 注意：关于定时任务(cron)不执行的情况，你可能需要修改项目相关文件，比如这个 README.md，新增一个空格也算，然后提交就行。
 
+## 升级警告
+
+V2.0 版本支持多站点多用户签到，不兼容 V1.0 版本配置，升级脚本后需要重新配置
+
 ## 使用方法
 
 ### 方式一：Github Actions（推荐）
 
-Fork 该仓库，进入仓库后点击 `Settings`，右侧栏点击 `Secrets`，点击 `New secret`。分别添加 `DOMAIN`、`USERNAME` 和 `PASSWD` 的值，对应为你的 `域名`、`用户名` 和 `密码`，如果你想接受 Server 酱微信通知，请配置 `PUSH_KEY` 的值。
+Fork 该仓库，进入仓库后点击 `Settings`，右侧栏点击 `Secrets`，点击 `New secret`。添加一下值：
 
-定时任务将于每天凌晨 `2:20` 分执行，如果需要修改请编辑 `.github/workflows/work.yaml` 中 `on.schedule.cron` 的值（注意，该时间时区为国际标准时区，国内时间需要 -8 Hours）。
+| 键 | 值 | 说明 |
+| --- | --- | --- |
+| USERS | `https://abc.com----abc@abc.com----abc123456;` | 用户组，格式为 `签到站点----用户名----密码`，多个站点或用户使用 `;` 分隔，至少存在一组 |
+| PUSH_KEY | `SCxxxxxxxxxxxxx` | Server 酱 SC KEY，非必填 |
+
+定时任务将于每天凌晨 `2:20` 分和晚上 `20:20` 执行，如果需要修改请编辑 `.github/workflows/work.yaml` 中 `on.schedule.cron` 的值（注意，该时间时区为国际标准时区，国内时间需要 -8 Hours）。
 
 ### 方式二：部署本地或服务器
 
@@ -22,13 +31,11 @@ Fork 该仓库，进入仓库后点击 `Settings`，右侧栏点击 `Secrets`，
 ```
 cp env.example .env
 vim .env
-# 域名 必填
-DOMAIN="https://****.wtf"
-# 登录名 必填
-USERNAME="EMAIL"
-# 密码 必填
-PASSWD="PASSWORD"
-# Server 酱推送 SCKEY 非必填
+# 用户配置格式如下：域名----账号----密码，多个账号使用 ; 分隔，支持换行但前后引号不能删掉
+USERS="https://abc.com----abc@abc.com---abc123456;
+https://abc.com----abc@abc.com---abc123456;
+https://abc.com----abc@abc.com---abc123456;"
+# Server 酱推送 SC KEY
 PUSH_KEY="PUSH_KEY"
 ```
 
@@ -63,6 +70,7 @@ $ bash /path/to/ssp-autocheckin.sh
 
 【推送结果】: 成功
 
+---------------------------------------
 ```
 
 如下：
