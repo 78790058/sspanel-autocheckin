@@ -22,10 +22,14 @@ Fork 该仓库，进入仓库后点击 `Settings`，右侧栏点击 `Secrets`，
 ```
 cp env.example .env
 vim .env
-DOMAIN="https://****.best" # 域名
-USERNAME="EMAIL" # 登录名
-PASSWD="PASSWORD" # 密码
-PUSH_KEY="PUSH_KEY" # Server 酱推送 SCKEY，非必填
+# 域名 必填
+DOMAIN="https://****.wtf"
+# 登录名 必填
+USERNAME="EMAIL"
+# 密码 必填
+PASSWD="PASSWORD"
+# Server 酱推送 SCKEY 非必填
+PUSH_KEY="PUSH_KEY"
 ```
 
 然后执行，签到成功后，即可添加定时任务。
