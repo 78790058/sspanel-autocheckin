@@ -32,6 +32,8 @@ if [ "${users_array}" ]; then
         domain=$(echo ${user} | awk -F'----' '{print $1}')
         username=$(echo ${user} | awk -F'----' '{print $2}')
         passwd=$(echo ${user} | awk -F'----' '{print $3}')
+        username_text="${username:0:1}***@${username#*@}"
+
         if [ -z "${domain}" ] || [ -z "${username}" ] || [ -z "${passwd}" ]; then
             echo "账号信息配置异常，请检查配置" && exit 1
         fi
@@ -44,7 +46,7 @@ if [ "${users_array}" ]; then
 
         login_log_text="## 用户 ${user_count}\n\n"
         login_log_text="${login_log_text}- 【签到站点】: ${domain}\n"
-        login_log_text="${login_log_text}- 【签到用户】: ${username}\n"
+        login_log_text="${login_log_text}- 【签到用户】: ${username_text}\n"
         login_log_text="${login_log_text}- 【签到时间】: ${start_time}\n"
 
         if [ ${login_code} == 1 ]; then
