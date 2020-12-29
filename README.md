@@ -142,7 +142,7 @@ SSPanel Auto Checkin v2.0.0 签到通知
 
 - 进入 Actions，手动执行一次工作流。
 
-![Github Action Run Workflow](https://cdn.jsdelivr.net/gh/isecret/sspanel-autocheckin@master/assets/github_actions_run_workflow.png)
+  ![Github Action Run Workflow](https://cdn.jsdelivr.net/gh/isecret/sspanel-autocheckin@master/assets/github_actions_run_workflow.png)
 
 - 进入 **Fork 后的项目**，点击右上角的 <kbd>star</kbd> 按钮。
 
