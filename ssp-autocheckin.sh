@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="2.1.2"
+VERSION="2.1.3"
 
 PATH="/usr/local/bin:/usr/bin:/bin"
 
@@ -69,6 +69,8 @@ if [ "${users_array}" ]; then
             userinfo=$(curl -k -s -G -b ${COOKIE_PATH} "${domain}/getuserinfo")
             user=$(echo ${userinfo} | tr '\r\n' ' ' | jq -r ".info.user" 2>&1)
 
+            # 用户等级
+            clasx=$(echo ${user} | jq -r ".class" 2>&1)
             # 等级过期时间
             class_expire=$(echo ${user} | jq -r ".class_expire" 2>&1)
             # 账户过期时间
@@ -96,7 +98,8 @@ if [ "${users_array}" ]; then
                 last_check_in_time_text=$(date -r ${last_check_in_time} '+%Y-%m-%d %H:%M:%S')
             fi
 
-            user_log_text="- 【用户余额】: ${money} CNY\n"
+            user_log_text="- 【用户等级】: VIP${clasx}\n"
+            user_log_text="${user_log_text}- 【用户余额】: ${money} CNY\n"
             user_log_text="${user_log_text}- 【用户限速】: ${node_speedlimit} Mbps\n"
             user_log_text="${user_log_text}- 【总流量】: ${transfer_enable_text}\n"
             user_log_text="${user_log_text}- 【剩余流量】: ${transfer_used_text}\n"
