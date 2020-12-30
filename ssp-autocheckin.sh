@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="2.1.3"
+VERSION="2.1.4"
 
 PATH="/usr/local/bin:/usr/bin:/bin"
 
@@ -124,11 +124,13 @@ if [ "${users_array}" ]; then
             result_log_text="${login_log_text}- 【签到状态】: 登录失败, 请检查配置\n\n"
         fi
 
-        log_text="${log_text}${result_log_text}---------------------------------------\n\n"
+        result_log_text="${result_log_text}---------------------------------------\n\n"
 
         if [ ${IS_DISPALY_CONTEXT} == 1 ]; then
-            echo -e ${log_text}
+            echo -e ${result_log_text}
         fi
+
+        log_text="${log_text}${result_log_text}"
 
         user_count=$(expr ${user_count} + 1)
     done
