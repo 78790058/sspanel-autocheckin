@@ -1,12 +1,14 @@
 #!/bin/bash
 
-VERSION="2.1.0"
+VERSION="2.1.1"
 
 PATH="/usr/local/bin:/usr/bin:/bin"
 
 ENV_PATH="$(dirname $0)/.env"
 
 IS_MACOS=$(uname | grep 'Darwin' | wc -l)
+
+IS_DISPALY_CONTEXT=1
 
 TITLE="SSPanel Auto Checkin v${VERSION} 签到通知"
 
@@ -16,6 +18,10 @@ PUSH_TMP_PATH="./.ss-autocheckin.tmp"
 
 if [ -f ${ENV_PATH} ]; then
     source ${ENV_PATH}
+fi
+
+if [ "${DISPALY_CONTEXT}" == "0" ]; then
+    IS_DISPALY_CONTEXT=0
 fi
 
 if [ -z $(command -v jq) ]; then
@@ -32,7 +38,17 @@ if [ "${users_array}" ]; then
         domain=$(echo ${user} | awk -F'----' '{print $1}')
         username=$(echo ${user} | awk -F'----' '{print $2}')
         passwd=$(echo ${user} | awk -F'----' '{print $3}')
-        username_text="${username:0:1}***@${username#*@}"
+
+        # 邮箱、域名脱敏处理
+        username_prefix="${username%%@*}"
+        username_suffix="${username#*@}"
+        username_root="${username#*.}"
+        username_text="${username_prefix:0:2}⁎⁎⁎@${username_suffix:0:2}⁎⁎⁎.${username_root}"
+
+        domain_protocol="${domain%%://*}"
+        domain_context="${domain##*//}"
+        domain_root="${domain##*.}"
+        domain_text="${domain_protocol}://${domain_context:0:2}⁎⁎⁎.${domain_root}"
 
         if [ -z "${domain}" ] || [ -z "${username}" ] || [ -z "${passwd}" ]; then
             echo "账号信息配置异常，请检查配置" && exit 1
@@ -45,7 +61,7 @@ if [ "${users_array}" ]; then
         login_status=$(echo ${login} | jq -r '.msg')
 
         login_log_text="## 用户 ${user_count}\n\n"
-        login_log_text="${login_log_text}- 【签到站点】: ${domain}\n"
+        login_log_text="${login_log_text}- 【签到站点】: ${domain_text}\n"
         login_log_text="${login_log_text}- 【签到用户】: ${username_text}\n"
         login_log_text="${login_log_text}- 【签到时间】: ${start_time}\n"
 
@@ -94,19 +110,22 @@ if [ "${users_array}" ]; then
             checkin_status=$(echo ${checkin} | jq -r ".msg")
 
             if [ "${checkin_status}" ]; then
-                checkin_log_text="- 【签到状态】: ${checkin_status}\n\n"
+                checkin_log_text="- 【签到状态】: ${checkin_status}\n"
             else
-                checkin_log_text="- 【签到状态】: 签到失败, 请检查是否存在签到验证码\n\n"
+                checkin_log_text="- 【签到状态】: 签到失败, 请检查是否存在签到验证码\n"
             fi
 
             result_log_text="${login_log_text}${checkin_log_text}${user_log_text}\n\n"
         else
 
-            result_log_text="${login_log_text}-【签到状态】: 登录失败, 请检查配置\n\n"
+            result_log_text="${login_log_text}- 【签到状态】: 登录失败, 请检查配置\n\n"
         fi
 
         log_text="${log_text}${result_log_text}---------------------------------------\n\n"
-        echo -e ${log_text}
+
+        if [ ${IS_DISPALY_CONTEXT} == 1 ]; then
+            echo -e ${log_text}
+        fi
 
         user_count=$(expr ${user_count} + 1)
     done

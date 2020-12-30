@@ -21,6 +21,7 @@ Fork 该仓库，进入仓库后点击 `Settings`，右侧栏点击 `Secrets`，
 | `QMSG_KEY`           | `e6fxxxxxxxxxxxx`                              | QQ 推送 ，填写自己申请[Qmsg 酱](https://qmsg.zendee.cn/me.html#/)的 `QMSG_KEY`  | 可选                   |
 | `TELEGRAMBOT_TOKEN`  | `123456:ABC-DEF1234xxx-xxx123ew11`             | TGBot 推送，填写自己向[@BotFather](https://t.me/BotFather) 申请的 Bot Token     | 可选，和下面的一起使用 |
 | `TELEGRAMBOT_CHATID` | `11xxxxxx03`                                   | TGBot 推送，填写[@getuseridbot](https://t.me/getuseridbot)私聊获取到的纯数字 ID | 可选，和上面一起使用   |
+| `DISPALY_CONTEXT` | `1`                                   | 任务执行时是否显示详细信息，`1` 显示 `0` 关闭，默认值 `1`  | 可选 |
 
 > TGBot 推送相关参数获取步骤可以点击 [TGBot 推送相关参数获取](#TGBot 推送相关参数获取) 查看。
 
@@ -78,7 +79,7 @@ TELEGRAMBOT_CHATID="TELEGRAMBOT_CHATID"
 > 不会使用 vim 操作的直接复制下面命令（修改相关参数）到终端运行即可。
 >
 > ```bash
-> cat > .env <<-EOF
+> cat > .env <<EOF
 > # 用户信息。格式：域名----账号----密码，多个账号使用 ; 分隔，支持换行但前后引号不能删掉
 > USERS="https://abc.com----abc@abc.com---abc123456;
 > https://abc.com----abc@abc.com---abc123456;
@@ -91,6 +92,9 @@ TELEGRAMBOT_CHATID="TELEGRAMBOT_CHATID"
 > TELEGRAMBOT_TOKEN=TELEGRAMBOT_TOKEN
 > # TelegramBot 推送用户 ID
 > TELEGRAMBOT_CHATID="TELEGRAMBOT_CHATID"
+> # 执行任务时是否显示签到详情
+> DISPALY_CONTEXT=1
+> EOF
 > ```
 
 #### 运行脚本签到
@@ -150,9 +154,7 @@ SSPanel Auto Checkin v2.0.0 签到通知
 
 ### Action 定时任务运行结果只显示推送信息
 
-因为签到详细信息涉及用户隐私问题，所以在 Action 任务结果中不会显示，签到详细信息会使用 Server 酱、Qmsg 酱或者 TelegramBot 推送（需要用户配置相关 `Secrets`）。
-
-想要在 Action 定时任务结果中显示签到详细信息：编辑 `ssp-autocheckin.sh`文件，搜索 `# echo -e ${result_log_text}` 字段，找到后将注释 `#` 删除即可。
+因为签到详细信息涉及用户隐私问题，所以对任务结果中对域名和用户名进行了脱敏处理，如果你仍希望关闭任务结果的显示，可以配置 Secret `DISPALY_CONTEXT` 的值为 `0` 将只展示任务推送结果，而不显示具体签到详情。
 
 ### TGBot 推送相关参数获取
 
