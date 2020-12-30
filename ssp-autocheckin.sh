@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="2.1.1"
+VERSION="2.1.2"
 
 PATH="/usr/local/bin:/usr/bin:/bin"
 
@@ -57,32 +57,32 @@ if [ "${users_array}" ]; then
         login=$(curl "${domain}/auth/login" -d "email=${username}&passwd=${passwd}&code=" -c ${COOKIE_PATH} -L -k -s)
 
         start_time=$(date '+%Y-%m-%d %H:%M:%S')
-        login_code=$(echo ${login} | jq -r '.ret')
-        login_status=$(echo ${login} | jq -r '.msg')
+        login_code=$(echo ${login} | jq -r '.ret' 2>&1)
+        login_status=$(echo ${login} | jq -r '.msg' 2>&1)
 
         login_log_text="## 用户 ${user_count}\n\n"
         login_log_text="${login_log_text}- 【签到站点】: ${domain_text}\n"
         login_log_text="${login_log_text}- 【签到用户】: ${username_text}\n"
         login_log_text="${login_log_text}- 【签到时间】: ${start_time}\n"
 
-        if [ ${login_code} == 1 ]; then
+        if [ "${login_code}" == "1" ]; then
             userinfo=$(curl -k -s -G -b ${COOKIE_PATH} "${domain}/getuserinfo")
-            user=$(echo ${userinfo} | tr '\r\n' ' ' | jq -r ".info.user")
+            user=$(echo ${userinfo} | tr '\r\n' ' ' | jq -r ".info.user" 2>&1)
 
             # 等级过期时间
-            class_expire=$(echo ${user} | jq -r ".class_expire")
+            class_expire=$(echo ${user} | jq -r ".class_expire" 2>&1)
             # 账户过期时间
-            expire_in=$(echo ${user} | jq -r ".expire_in")
+            expire_in=$(echo ${user} | jq -r ".expire_in" 2>&1)
             # 上次签到时间
-            last_check_in_time=$(echo ${user} | jq -r ".last_check_in_time")
+            last_check_in_time=$(echo ${user} | jq -r ".last_check_in_time" 2>&1)
             # 用户余额
-            money=$(echo ${user} | jq -r ".money")
+            money=$(echo ${user} | jq -r ".money" 2>&1)
             # 用户限速
-            node_speedlimit=$(echo ${user} | jq -r ".node_speedlimit")
+            node_speedlimit=$(echo ${user} | jq -r ".node_speedlimit" 2>&1)
             # 总流量
-            transfer_enable=$(echo ${user} | jq -r ".transfer_enable")
+            transfer_enable=$(echo ${user} | jq -r ".transfer_enable" 2>&1)
             # 总共使用流量
-            last_day_t=$(echo ${user} | jq -r ".last_day_t")
+            last_day_t=$(echo ${user} | jq -r ".last_day_t" 2>&1)
             # 剩余流量
             transfer_used=$(expr ${transfer_enable} - ${last_day_t})
             # 转换 GB
@@ -106,8 +106,8 @@ if [ "${users_array}" ]; then
             user_log_text="${user_log_text}- 【上次签到时间】: ${last_check_in_time_text}\n"
 
             checkin=$(curl -k -s -d "" -b ${COOKIE_PATH} "${domain}/user/checkin")
-            chechin_code=$(echo ${checkin} | jq -r ".ret")
-            checkin_status=$(echo ${checkin} | jq -r ".msg")
+            chechin_code=$(echo ${checkin} | jq -r ".ret" 2>&1)
+            checkin_status=$(echo ${checkin} | jq -r ".msg" 2>&1)
 
             if [ "${checkin_status}" ]; then
                 checkin_log_text="- 【签到状态】: ${checkin_status}\n"
@@ -134,7 +134,7 @@ if [ "${users_array}" ]; then
     if [ "${PUSH_KEY}" ]; then
         echo -e "text=${TITLE}&desp=${log_text}" >${PUSH_TMP_PATH}
         push=$(curl -k -s --data-binary @${PUSH_TMP_PATH} "https://sc.ftqq.com/${PUSH_KEY}.send")
-        push_code=$(echo ${push} | jq -r ".errno")
+        push_code=$(echo ${push} | jq -r ".errno" 2>&1)
         if [ ${push_code} -eq 0 ]; then
             echo -e "【Server 酱推送结果】: 成功\n"
         else
@@ -147,7 +147,7 @@ if [ "${users_array}" ]; then
         result_qmsg_log_text="${TITLE}${log_text}"
         echo -e "msg=${result_qmsg_log_text}" >${PUSH_TMP_PATH}
         push=$(curl -k -s --data-binary @${PUSH_TMP_PATH} "https://qmsg.zendee.cn/send/${QMSG_KEY}")
-        push_code=$(echo ${push} | jq -r ".success")
+        push_code=$(echo ${push} | jq -r ".success" 2>&1)
         if [ "${push_code}" == "true" ]; then
             echo -e "【Qmsg 酱推送结果】: 成功\n"
         else
