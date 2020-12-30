@@ -74,10 +74,12 @@ QMSG_KEY="QMSG_KEY"
 TELEGRAMBOT_TOKEN=TELEGRAMBOT_TOKEN
 # TelegramBot 推送用户 ID
 TELEGRAMBOT_CHATID="TELEGRAMBOT_CHATID"
+# 执行任务时是否显示签到详情
+DISPALY_CONTEXT=1
 ```
 
-> 不会使用 vim 操作的直接复制下面命令（修改相关参数）到终端运行即可。
->
+不会使用 vim 操作的直接复制下面命令（修改相关参数）到终端运行即可。
+
 > ```bash
 > cat > .env <<EOF
 > # 用户信息。格式：域名----账号----密码，多个账号使用 ; 分隔，支持换行但前后引号不能删掉
