@@ -51,7 +51,7 @@ check_sys() {
 }
 
 #检查 jq 依赖
-check_crontab_installed_status() {
+check_jq_installed_status() {
     if [ -z $(command -v jq) ]; then
         echo -e "jq 依赖没有安装，开始安装..."
         check_root
