@@ -23,9 +23,9 @@ fi
 #检查账户权限
 check_root() {
     if [ 0 == $UID ]; then
-        echo -e "${Info} 当前用户是 ROOT 用户，可以继续操作" && sleep 1
+        echo -e "当前用户是 ROOT 用户，可以继续操作" && sleep 1
     else
-        echo -e "${Error} 当前非 ROOT 账号(或没有 ROOT 权限)，无法继续操作，请更换 ROOT 账号或使用 ${Green_background_prefix}su${Font_color_suffix} 命令获取临时 ROOT权限（执行后可能会提示输入当前账号的密码）。" && exit 1
+        echo -e "当前非 ROOT 账号(或没有 ROOT 权限)，无法继续操作，请更换 ROOT 账号或使用 su命令获取临时 ROOT 权限（执行后可能会提示输入当前账号的密码）。" && exit 1
     fi
 }
 
@@ -33,6 +33,8 @@ check_root() {
 check_sys() {
     if [[ -f /etc/redhat-release ]]; then
         release="centos"
+    elif [ ${IS_MACOS} -eq 1 ]; then
+        release="macos"
     elif cat /etc/issue | grep -q -E -i "debian"; then
         release="debian"
     elif cat /etc/issue | grep -q -E -i "ubuntu"; then
@@ -48,16 +50,17 @@ check_sys() {
     fi
 }
 
+#检查 jq 依赖
 check_crontab_installed_status() {
     if [ -z $(command -v jq) ]; then
         echo -e "jq 依赖没有安装，开始安装..."
         check_root
         if [[ ${release} == "centos" ]]; then
-            yum install crond -y
+            yum update && yum install jq -y
         elif [[ ${release} == "macos" ]]; then
             brew install jq
         else
-            apt-get install cron -y
+            apt-get update && apt-get install jq -y
         fi
         if [ -z $(command -v jq) ]; then
             echo -e "jq 依赖安装失败，请检查！" && exit 1
