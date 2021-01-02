@@ -136,7 +136,6 @@ DISPALY_CONTEXT=1
 脚本添加可执行权限后运行。
 
 ```bash
-$ sed -i 's/# echo -e/echo -e/g' ssp-autocheckin.sh # 终端输出个人信息
 $ chmod +x ssp-autocheckin.sh && ./ssp-autocheckin.sh
 SSPanel Auto Checkin v2.1.5 签到通知
 ## 用户 1
@@ -145,6 +144,7 @@ SSPanel Auto Checkin v2.1.5 签到通知
 - 【签到用户】: EMAIL
 - 【签到时间】: 2020-12-26 19:03:19
 - 【签到状态】: 续命1天, 获得了 111 MB流量.
+- 【用户等级】：VIP1
 - 【用户余额】: 2.98 CNY
 - 【用户限速】: 100 Mbps
 - 【总流量】: 317.91 GB
