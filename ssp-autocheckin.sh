@@ -2,7 +2,7 @@
 PATH="/usr/local/bin:/usr/bin:/bin"
 
 #版本、初始化变量
-VERSION="2.1.4"
+VERSION="2.1.5"
 ENV_PATH="$(dirname $0)/.env"
 IS_MACOS=$(uname | grep 'Darwin' | wc -l)
 IS_DISPALY_CONTEXT=1
@@ -141,7 +141,7 @@ ssp_autochenkin() {
             login_code=$(echo ${login} | jq -r '.ret' 2>&1)
             login_status=$(echo ${login} | jq -r '.msg' 2>&1)
 
-            login_log_text="\n ## 用户 ${user_count}\n\n"
+            login_log_text="\n## 用户 ${user_count}\n\n"
             login_log_text="${login_log_text}- 【签到站点】: ${domain_text}\n"
             login_log_text="${login_log_text}- 【签到用户】: ${username_text}\n"
             login_log_text="${login_log_text}- 【签到时间】: ${start_time}\n"

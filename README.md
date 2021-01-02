@@ -140,7 +140,8 @@ DISPALY_CONTEXT=1
 ```bash
 $ sed -i 's/# echo -e/echo -e/g' ssp-autocheckin.sh # 终端输出个人信息
 $ chmod +x ssp-autocheckin.sh && ./ssp-autocheckin.sh
-SSPanel Auto Checkin v2.0.0 签到通知
+SSPanel Auto Checkin v2.1.5 签到通知
+## 用户 1
 
 - 【签到站点】: DOMAIN
 - 【签到用户】: EMAIL
