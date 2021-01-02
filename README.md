@@ -135,8 +135,6 @@ DISPALY_CONTEXT=1
 
 脚本添加可执行权限后运行。
 
-> 因为个人隐私问题，脚本运行时不会输出个人账户信息。本地运行想在终端输出个人信息的运行 `sed -i 's/# echo -e/echo -e/g' ssp-autocheckin.sh` 即可。
-
 ```bash
 $ sed -i 's/# echo -e/echo -e/g' ssp-autocheckin.sh # 终端输出个人信息
 $ chmod +x ssp-autocheckin.sh && ./ssp-autocheckin.sh
