@@ -2,6 +2,38 @@
 
 ![SSPanel_Auto_Checkin](https://github.com/isecret/sspanel-autocheckin/workflows/SSPanel_Auto_Checkin/badge.svg)
 
+<details>
+   <summary>目录</summary>
+
+- [SSPanel 自动签到 V2.0 支持多站点多用户](#sspanel-自动签到-v20-支持多站点多用户)
+  - [说明](#说明)
+  - [升级警告](#升级警告)
+  - [使用方法](#使用方法)
+    - [方式一：Github Actions（推荐）](#方式一github-actions推荐)
+    - [方式二：部署本地或服务器](#方式二部署本地或服务器)
+      - [安装依赖](#安装依赖)
+      - [克隆仓库](#克隆仓库)
+      - [修改配置](#修改配置)
+      - [运行脚本签到](#运行脚本签到)
+      - [添加定时任务](#添加定时任务)
+  - [常见问题](#常见问题)
+    - [关于定时任务不执行](#关于定时任务不执行)
+    - [Action 定时任务运行结果只显示推送信息](#action-定时任务运行结果只显示推送信息)
+    - [TGBot 推送相关参数获取](#tgbot-推送相关参数获取)
+    - [Fork 之后如何同步原作者的更新内容](#fork-之后如何同步原作者的更新内容)
+      - [方式一： 保留自己内容](#方式一-保留自己内容)
+      - [方式二： 源作者内容直接覆盖自己内容](#方式二-源作者内容直接覆盖自己内容)
+
+</details>
+
+## 相关说明
+
+- 适用于使用 SSPanel 用户管理面板搭建的网站，网站页面底部会有 `Powered by SSPANEL` 字段
+- 支持使用配置文件读取账户信息，支持多机场多用户签到
+- 支持一日多次签到
+- 支持推送签到信息到 QQ、微信和 Telegram
+- 若有 bug 请到 [Issues](https://github.com/isecret/sspanel-autocheckin/issues/new) 反馈
+
 ## 升级警告
 
 V2.0 版本支持多站点多用户签到，不兼容 V1.0 版本配置，升级脚本后需要重新配置
@@ -21,7 +53,7 @@ Fork 该仓库，进入仓库后点击 `Settings`，右侧栏点击 `Secrets`，
 | `QMSG_KEY`           | `e6fxxxxxxxxxxxx`                              | QQ 推送 ，填写自己申请[Qmsg 酱](https://qmsg.zendee.cn/me.html#/)的 `QMSG_KEY`  | 可选                   |
 | `TELEGRAMBOT_TOKEN`  | `123456:ABC-DEF1234xxx-xxx123ew11`             | TGBot 推送，填写自己向[@BotFather](https://t.me/BotFather) 申请的 Bot Token     | 可选，和下面的一起使用 |
 | `TELEGRAMBOT_CHATID` | `11xxxxxx03`                                   | TGBot 推送，填写[@getuseridbot](https://t.me/getuseridbot)私聊获取到的纯数字 ID | 可选，和上面一起使用   |
-| `DISPALY_CONTEXT` | `1`                                   | 任务执行时是否显示详细信息，`1` 显示 `0` 关闭，默认值 `1`  | 可选 |
+| `DISPALY_CONTEXT`    | `1`                                            | 任务执行时是否显示详细信息，`1` 显示 `0` 关闭，默认值 `1`                       | 可选                   |
 
 > TGBot 推送相关参数获取步骤可以点击 [TGBot 推送相关参数获取](#TGBot 推送相关参数获取) 查看。
 
@@ -108,7 +140,8 @@ DISPALY_CONTEXT=1
 ```bash
 $ sed -i 's/# echo -e/echo -e/g' ssp-autocheckin.sh # 终端输出个人信息
 $ chmod +x ssp-autocheckin.sh && ./ssp-autocheckin.sh
-SSPanel Auto Checkin v2.0.0 签到通知
+SSPanel Auto Checkin v2.1.5 签到通知
+## 用户 1
 
 - 【签到站点】: DOMAIN
 - 【签到用户】: EMAIL
@@ -207,7 +240,7 @@ SSPanel Auto Checkin v2.0.0 签到通知
 
 1. 确认已安装 [![pull](https://prod.download/pull-18h-svg) Pull app](https://github.com/apps/pull) 插件。
 
-2. 编辑 [pull.yml](https://github.com/RayWangQvQ/BiliBiliTool/blob/main/.github/pull.yml) 文件，将第 5 行内容修改为 `mergeMethod: hardreset`，然后保存提交。
+2. 编辑 pull.yml (在 `.github` 目录下) 文件，将第 5 行内容修改为 `mergeMethod: hardreset`，然后保存提交。
 
 完成后，上游代码更新后 pull 插件会自动发起 PR 更新**覆盖**自己仓库的代码！
 
