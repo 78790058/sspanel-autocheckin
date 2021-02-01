@@ -123,7 +123,7 @@ ssp_autochenkin() {
             # 邮箱、域名脱敏处理
             username_prefix="${username%%@*}"
             username_suffix="${username#*@}"
-            username_root="${username#*.}"
+            username_root="${username_suffix#*.}"
             username_text="${username_prefix:0:2}⁎⁎⁎@${username_suffix:0:2}⁎⁎⁎.${username_root}"
 
             domain_protocol="${domain%%://*}"
