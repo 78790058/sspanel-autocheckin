@@ -2,20 +2,23 @@
 PATH="/usr/local/bin:/usr/bin:/bin"
 
 #版本、初始化变量
-VERSION="2.1.6"
+VERSION="2.1.7"
 ENV_PATH="$(dirname $0)/.env"
 IS_MACOS=$(uname | grep 'Darwin' | wc -l)
 IS_DISPALY_CONTEXT=1
 TITLE="SSPanel Auto Checkin v${VERSION} 签到通知"
-users_array=($(echo ${USERS} | tr ';' ' '))
+users_array=""
 log_text=""
 COOKIE_PATH="./.ss-autocheckin.cook"
 PUSH_TMP_PATH="./.ss-autocheckin.tmp"
 
+# 本地模式
 if [ -f ${ENV_PATH} ]; then
     source ${ENV_PATH}
+    users_array=($(echo ${USERS} | tr ';' ' '))
 fi
 
+# 是否显示上下文 默认是
 if [ "${DISPALY_CONTEXT}" == "0" ]; then
     IS_DISPALY_CONTEXT=0
 fi
