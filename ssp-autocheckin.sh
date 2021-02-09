@@ -84,6 +84,18 @@ send_message() {
         fi
     fi
 
+        # Server 酱Turbo 通知
+    if [ "${PUSH_TURBO_KEY}" ]; then
+        echo -e "text=${TITLE}&desp=${log_text}" >${PUSH_TMP_PATH}
+        push=$(curl -k -s --data-binary @${PUSH_TMP_PATH} "https://sctapi.ftqq.com/${PUSH_TURBO_KEY}.send")
+        push_code=$(echo ${push} | jq -r ".errno" 2>&1)
+        if [ ${push_code} -eq 0 ]; then
+            echo -e "【Server 酱推送结果】: 成功\n"
+        else
+            echo -e "【Server 酱推送结果】: 失败\n"
+        fi
+    fi
+
     # Qmsg 酱通知
     if [ "${QMSG_KEY}" ]; then
         result_qmsg_log_text="${TITLE}${log_text}"
