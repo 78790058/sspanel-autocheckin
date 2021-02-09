@@ -98,6 +98,7 @@ send_message() {
         #####
         push=$(curl -s POST "https://sctapi.ftqq.com/${PUSH_TURBO_KEY}.send?text=${TITLE}&desp=${log_text}")
         push_code=$(echo ${push} | jq -r ".data.errno" 2>&1)
+        echo -e ${push_code}
         #####
         # 查询微信发是否成功，需要用到返回中的 pushid 和 readkey
         #####
