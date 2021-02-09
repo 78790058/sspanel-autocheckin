@@ -104,6 +104,7 @@ send_message() {
         #####
         push_id=$(echo ${push} | jq -r ".data.pushid" 2>&1)
         push_readkey=$(echo ${push} | jq -r ".data.readkey" 2>&1)
+        set -xv
         if [ ${push_code} = 0 ]; then
             echo -e "【Server 酱Turbo 队列结果】: 成功\n"
             #####
