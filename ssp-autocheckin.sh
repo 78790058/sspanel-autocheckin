@@ -123,7 +123,7 @@ send_message() {
                     fi
                     break
                 else
-                    if [ $i -lt 10]; then
+                    if [ $i -lt 10 ]; then
                         let 'i++'
                         Sleep 2s
                     else
