@@ -103,8 +103,7 @@ send_message() {
         #####
         push_id=$(echo ${push} | jq -r ".data.pushid" 2>&1)
         push_readkey=$(echo ${push} | jq -r ".data.readkey" 2>&1)
-        echo 
-        if [ ${push_code} = 0 ]; then
+        if [ "${push_code}" -eq 0 ]; then
             echo -e "【Server 酱Turbo 队列结果】: 成功\n"
             #####
             # 放入队列成功后，轮询查询接口获取微信发送成功 or 失败
@@ -131,7 +130,6 @@ send_message() {
                     fi
 
                 fi
-
             done
         else
             echo -e "【Server 酱Turbo 队列结果】: 失败\n"
