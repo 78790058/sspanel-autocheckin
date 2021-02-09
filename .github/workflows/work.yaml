@@ -15,6 +15,7 @@ env:
     TZ: Asia/Shanghai
     USERS: ${{secrets.USERS}}
     PUSH_KEY: ${{secrets.PUSH_KEY}}
+    PUSH_TURBO_KEY: ${{secrets.PUSH_TURBO_KEY}}
     QMSG_KEY: ${{secrets.QMSG_KEY}}
     TELEGRAMBOT_TOKEN: ${{ secrets.TELEGRAMBOT_TOKEN }} 
     TELEGRAMBOT_CHATID: ${{ secrets.TELEGRAMBOT_CHATID }}
