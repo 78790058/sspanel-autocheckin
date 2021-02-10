@@ -2,20 +2,25 @@
 PATH="/usr/local/bin:/usr/bin:/bin"
 
 #版本、初始化变量
-VERSION="2.1.6"
+VERSION="2.1.8"
 ENV_PATH="$(dirname $0)/.env"
 IS_MACOS=$(uname | grep 'Darwin' | wc -l)
 IS_DISPALY_CONTEXT=1
 TITLE="SSPanel Auto Checkin v${VERSION} 签到通知"
-users_array=($(echo ${USERS} | tr ';' ' '))
+users_array=""
 log_text=""
 COOKIE_PATH="./.ss-autocheckin.cook"
 PUSH_TMP_PATH="./.ss-autocheckin.tmp"
 
+# 本地模式
 if [ -f ${ENV_PATH} ]; then
     source ${ENV_PATH}
 fi
 
+# 加载用户组配置
+users_array=($(echo ${USERS} | tr ';' ' '))
+
+# 是否显示上下文 默认是
 if [ "${DISPALY_CONTEXT}" == "0" ]; then
     IS_DISPALY_CONTEXT=0
 fi
@@ -84,40 +89,38 @@ send_message() {
         fi
     fi
 
-        # Server 酱Turbo 通知
-        
-        #####
-        # Server 酱Turbo 支持企业微信应用消息、Android、Bark iOS、企业微信机器人、钉钉群机器人、飞书机器人等通道
-        # 用来解决2021 年 4 月底下线模板消息后 Server 酱通知的问题
-        # Server 酱Turbo 网址：https://sct.ftqq.com/
-        #####
-    if [ "${PUSH_TURBO_KEY}" ]; then
-        #####
-        # 调用发起推送接口后，Server 酱Turbo 并不是立刻调用微信接口，
-        # 而是会将任务放入异步推送队列。所以返回的结果 push_code 是放入队列是否成功。
-        #####
-        push=$(curl -s POST "https://sctapi.ftqq.com/${PUSH_TURBO_KEY}.send?text=${TITLE}&desp=${log_text}")
+    # Server 酱 Turbo 通知
+if [ "${PUSH_TURBO_KEY}" ]; then
+        echo -e "text=${TITLE}&desp=${log_text}" >${PUSH_TMP_PATH}
+        push=$(curl -k -s -X POST --data-binary @${PUSH_TMP_PATH} "https://sctapi.ftqq.com/${PUSH_TURBO_KEY}.send")
+        ###
+        # push 成功后，获取相关查询参数
+        ### 
+
         push_code=$(echo ${push} | jq -r ".data.errno" 2>&1)
-        echo -e ${push_code}
-        #####
-        # 查询微信发是否成功，需要用到返回中的 pushid 和 readkey
-        #####
         push_id=$(echo ${push} | jq -r ".data.pushid" 2>&1)
         push_readkey=$(echo ${push} | jq -r ".data.readkey" 2>&1)
-        set -xv
-        if [ ${push_code} = 0 ]; then
+        
+        ###
+        # 企业微信推送逻辑修改
+        # 先放入队列，push_code 为 0 代表放入队列成功不代表推送成功
+        ###
+
+        if [ "${push_code} -eq 0" ]; then
             echo -e "【Server 酱Turbo 队列结果】: 成功\n"
-            #####
-            # 放入队列成功后，轮询查询接口获取微信发送成功 or 失败
-            # 默认间隔 2s ,轮询 10 次
-            #####
+            
+            ###
+            # 推送结果需要异步查询
+            # 目前每隔两秒查询一次，轮询 10 次检查推送结果
+            ###
+
             i=1
             while [ $i -le 10 ]; do
-                wxstatus=$(curl -s "https://sctapi.ftqq.com/push?id=${push_id}&readkey=${push_readkey}")
-                wx_result=$(echo ${wxstatus} | jq -r ".data.wxstatus" 2>&1 | sed 's/\"{/{/g'| sed 's/\}"/}/g' | sed 's/\\"/"/g') 
+                wx_status=$(curl -s "https://sctapi.ftqq.com/push?id=${push_id}&readkey=${push_readkey}")
+                wx_result=$(echo ${wx_status} | jq -r ".data.wxstatus" 2>&1 | sed 's/\"{/{/g'| sed 's/\}"/}/g' | sed 's/\\"/"/g') 
                 if [ "${wx_result}" ]; then
                     wx_errcode=$(echo ${wx_result} | jq -r ".errcode" 2>&1)
-                    if [ ${wx_errcode} = 0 ]; then
+                    if [ "${wx_errcode} -eq 0" ]; then
                         echo -e "【Server 酱Turbo 推送结果】: 成功\n"
                     else
                         echo -e "【Server 酱Turbo 推送结果】: 失败，错误码:"${wx_errcode}",more info at https:\\open.work.weixin.qq.com\devtool\query?e=40056\n"
@@ -132,11 +135,13 @@ send_message() {
                     fi
 
                 fi
+
             done
         else
             echo -e "【Server 酱Turbo 队列结果】: 失败\n"
         fi
     fi
+
 
     # Qmsg 酱通知
     if [ "${QMSG_KEY}" ]; then
