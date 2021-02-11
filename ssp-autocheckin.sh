@@ -123,7 +123,7 @@ if [ "${PUSH_TURBO_KEY}" ]; then
                     if [ "${wx_errcode} -eq 0" ]; then
                         echo -e "【Server 酱Turbo 推送结果】: 成功\n"
                     else
-                        echo -e "【Server 酱Turbo 推送结果】: 失败，错误码:"${wx_errcode}",more info at https:\\open.work.weixin.qq.com\devtool\query?e=40056\n"
+                        echo -e "【Server 酱Turbo 推送结果】: 失败，错误码:"${wx_errcode}",more info at https:\\open.work.weixin.qq.com\devtool\n"
                     fi
                     break
                 else
