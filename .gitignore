@@ -3,3 +3,5 @@
 .DS_Store
 ./.ss-autocheckin.cook
 ./.ss-autocheckin.tmp
+test.log
+test1.log

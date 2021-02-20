@@ -50,10 +50,12 @@ Fork 该仓库，进入仓库后点击 `Settings`，右侧栏点击 `Secrets`，
 | -------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------- | ---------------------- |
 | `USERS`              | `https://abc.com----abc@abc.com----abc123456;` | 用户组，格式为 `签到站点----用户名----密码`，多个站点或用户使用 `;` 分隔        | 必填，至少存在一组     |
 | `PUSH_KEY`           | `SCxxxxxxxxxxxxx`                              | 微信推送 ，填写自己申请[Server 酱](http://sc.ftqq.com/?c=code)的`SC KEY`        | 可选                   |
+| `PUSH_TURBO_KEY`           | `xxxxxxxxxxxxxxx`                              | 企业微信推送 ，填写自己申请[Server 酱 Turbo](https://sct.ftqq.com/sendkey)的`SendKey`        | 可选                   |
 | `QMSG_KEY`           | `e6fxxxxxxxxxxxx`                              | QQ 推送 ，填写自己申请[Qmsg 酱](https://qmsg.zendee.cn/me.html#/)的 `QMSG_KEY`  | 可选                   |
 | `TELEGRAMBOT_TOKEN`  | `123456:ABC-DEF1234xxx-xxx123ew11`             | TGBot 推送，填写自己向[@BotFather](https://t.me/BotFather) 申请的 Bot Token     | 可选，和下面的一起使用 |
 | `TELEGRAMBOT_CHATID` | `11xxxxxx03`                                   | TGBot 推送，填写[@getuseridbot](https://t.me/getuseridbot)私聊获取到的纯数字 ID | 可选，和上面一起使用   |
 | `DISPALY_CONTEXT`    | `1`                                            | 任务执行时是否显示详细信息，`1` 显示 `0` 关闭，默认值 `1`                       | 可选                   |
+
 
 > TGBot 推送相关参数获取步骤可以点击 [TGBot 推送相关参数获取](#TGBot 推送相关参数获取) 查看。
 
