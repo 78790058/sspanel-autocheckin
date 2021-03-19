@@ -19,7 +19,7 @@ env:
     QMSG_KEY: ${{secrets.QMSG_KEY}}
     TELEGRAMBOT_TOKEN: ${{ secrets.TELEGRAMBOT_TOKEN }} 
     TELEGRAMBOT_CHATID: ${{ secrets.TELEGRAMBOT_CHATID }}
-    DISPALY_CONTEXT: ${{ secrets.DISPALY_CONTEXT }}
+    DISPLAY_CONTEXT: ${{ secrets.DISPLAY_CONTEXT }}
 
 jobs:
     build:
