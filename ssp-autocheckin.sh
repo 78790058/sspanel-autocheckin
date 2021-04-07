@@ -228,44 +228,48 @@ ssp_autochenkin() {
                 userinfo=$(curl -k -s -G -b ${COOKIE_PATH} "${domain}/getuserinfo")
                 user=$(echo ${userinfo} | tr '\r\n' ' ' | jq -r ".info.user" 2>&1)
 
-                # 用户等级
-                clasx=$(echo ${user} | jq -r ".class" 2>&1)
-                # 等级过期时间
-                class_expire=$(echo ${user} | jq -r ".class_expire" 2>&1)
-                # 账户过期时间
-                expire_in=$(echo ${user} | jq -r ".expire_in" 2>&1)
-                # 上次签到时间
-                last_check_in_time=$(echo ${user} | jq -r ".last_check_in_time" 2>&1)
-                # 用户余额
-                money=$(echo ${user} | jq -r ".money" 2>&1)
-                # 用户限速
-                node_speedlimit=$(echo ${user} | jq -r ".node_speedlimit" 2>&1)
-                # 总流量
-                transfer_enable=$(echo ${user} | jq -r ".transfer_enable" 2>&1)
-                # 总共使用流量
-                last_day_t=$(echo ${user} | jq -r ".last_day_t" 2>&1)
-                # 剩余流量
-                transfer_used=$(expr ${transfer_enable} - ${last_day_t})
-                # 转换 GB
-                transfer_enable_text=$(echo ${transfer_enable} | awk '{ byte =$1 /1024/1024**2 ; print byte " GB" }')
-                last_day_t_text=$(echo ${last_day_t} | awk '{ byte =$1 /1024/1024**2 ; print byte " GB" }')
-                transfer_used_text=$(echo ${transfer_used} | awk '{ byte =$1 /1024/1024**2 ; print byte " GB" }')
-                # 转换上次签到时间
-                if [ ${IS_MACOS} -eq 0 ]; then
-                    last_check_in_time_text=$(date -d "1970-01-01 UTC ${last_check_in_time} seconds" "+%F %T")
-                else
-                    last_check_in_time_text=$(date -r ${last_check_in_time} '+%Y-%m-%d %H:%M:%S')
-                fi
+                if [ "${user}" ]; then
+                    # 用户等级
+                    clasx=$(echo ${user} | jq -r ".class" 2>&1)
+                    # 等级过期时间
+                    class_expire=$(echo ${user} | jq -r ".class_expire" 2>&1)
+                    # 账户过期时间
+                    expire_in=$(echo ${user} | jq -r ".expire_in" 2>&1)
+                    # 上次签到时间
+                    last_check_in_time=$(echo ${user} | jq -r ".last_check_in_time" 2>&1)
+                    # 用户余额
+                    money=$(echo ${user} | jq -r ".money" 2>&1)
+                    # 用户限速
+                    node_speedlimit=$(echo ${user} | jq -r ".node_speedlimit" 2>&1)
+                    # 总流量
+                    transfer_enable=$(echo ${user} | jq -r ".transfer_enable" 2>&1)
+                    # 总共使用流量
+                    last_day_t=$(echo ${user} | jq -r ".last_day_t" 2>&1)
+                    # 剩余流量
+                    transfer_used=$(expr ${transfer_enable} - ${last_day_t})
+                    # 转换 GB
+                    transfer_enable_text=$(echo ${transfer_enable} | awk '{ byte =$1 /1024/1024**2 ; print byte " GB" }')
+                    last_day_t_text=$(echo ${last_day_t} | awk '{ byte =$1 /1024/1024**2 ; print byte " GB" }')
+                    transfer_used_text=$(echo ${transfer_used} | awk '{ byte =$1 /1024/1024**2 ; print byte " GB" }')
+                    # 转换上次签到时间
+                    if [ ${IS_MACOS} -eq 0 ]; then
+                        last_check_in_time_text=$(date -d "1970-01-01 UTC ${last_check_in_time} seconds" "+%F %T")
+                    else
+                        last_check_in_time_text=$(date -r ${last_check_in_time} '+%Y-%m-%d %H:%M:%S')
+                    fi
 
-                user_log_text="- 【用户等级】: VIP${clasx}\n"
-                user_log_text="${user_log_text}- 【用户余额】: ${money} CNY\n"
-                user_log_text="${user_log_text}- 【用户限速】: ${node_speedlimit} Mbps\n"
-                user_log_text="${user_log_text}- 【总流量】: ${transfer_enable_text}\n"
-                user_log_text="${user_log_text}- 【剩余流量】: ${transfer_used_text}\n"
-                user_log_text="${user_log_text}- 【已使用流量】: ${last_day_t_text}\n"
-                user_log_text="${user_log_text}- 【等级过期时间】: ${class_expire}\n"
-                user_log_text="${user_log_text}- 【账户过期时间】: ${expire_in}\n"
-                user_log_text="${user_log_text}- 【上次签到时间】: ${last_check_in_time_text}\n"
+                    user_log_text="- 【用户等级】: VIP${clasx}\n"
+                    user_log_text="${user_log_text}- 【用户余额】: ${money} CNY\n"
+                    user_log_text="${user_log_text}- 【用户限速】: ${node_speedlimit} Mbps\n"
+                    user_log_text="${user_log_text}- 【总流量】: ${transfer_enable_text}\n"
+                    user_log_text="${user_log_text}- 【剩余流量】: ${transfer_used_text}\n"
+                    user_log_text="${user_log_text}- 【已使用流量】: ${last_day_t_text}\n"
+                    user_log_text="${user_log_text}- 【等级过期时间】: ${class_expire}\n"
+                    user_log_text="${user_log_text}- 【账户过期时间】: ${expire_in}\n"
+                    user_log_text="${user_log_text}- 【上次签到时间】: ${last_check_in_time_text}\n"
+                else
+                    user_log_text=""
+                fi
 
                 checkin=$(curl -k -s -d "" -b ${COOKIE_PATH} "${domain}/user/checkin")
                 chechin_code=$(echo ${checkin} | jq -r ".ret" 2>&1)
