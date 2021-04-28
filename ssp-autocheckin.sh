@@ -2,7 +2,7 @@
 PATH="/usr/local/bin:/usr/bin:/bin"
 
 #版本、初始化变量
-VERSION="2.2.0"
+VERSION="2.2.1"
 ENV_PATH="$(dirname $0)/.env"
 IS_MACOS=$(uname | grep 'Darwin' | wc -l)
 IS_DISPLAY_CONTEXT=1
@@ -144,7 +144,7 @@ send_message() {
 
     # 钉钉群机器人通知
     if [ "${DDBOT_TOKEN}" ]; then
-        push=$(curl "https://oapi.dingtalk.com/robot/send?access_token=${DDBOT_TOKEN}" \
+        push=$(curl -k -s "https://oapi.dingtalk.com/robot/send?access_token=${DDBOT_TOKEN}" \
         -H 'Content-Type: application/json' \
         -d "{
             \"msgtype\": \"markdown\",
