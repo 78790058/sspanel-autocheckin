@@ -213,9 +213,9 @@ send_message() {
             -H 'Content-Type: application/json' \
             -d "{
                 \"touser\": \"@all\",
-                \"msgtype\": \"markdown\",
+                \"msgtype\": \"text\",
                 \"agentid\": \"${WEWORK_AGENT_ID}\",
-                \"markdown\": {
+                \"text\": {
                     \"content\":\"${result_wework_log_text}\"
                 }
             }")
