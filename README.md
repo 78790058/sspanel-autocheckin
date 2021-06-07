@@ -62,7 +62,7 @@ Fork 该仓库，进入仓库后点击 `Settings`，右侧栏点击 `Secrets`，
 | `DISPLAY_CONTEXT`    | `1`                                            | 任务执行时是否显示详细信息，`1` 显示 `0` 关闭，默认值 `1`                       | 可选                   |
 
 
-> TGBot 推送相关参数获取步骤可以点击 [TGBot 推送相关参数获取](#TGBot 推送相关参数获取) 查看。
+> TGBot 推送相关参数获取步骤可以点击 [TGBot 推送相关参数获取](#tgbot-推送相关参数获取) 查看。
 
 定时任务将于每天凌晨 `2:20` 分和晚上 `20:20` 执行，如果需要修改请编辑 `.github/workflows/work.yaml` 中 `on.schedule.cron` 的值（注意，该时间时区为国际标准时区，国内时间需要 -8 Hours）。
 
